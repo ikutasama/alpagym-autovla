@@ -22,7 +22,7 @@ alpasim:
     control_timestep_us: 200_000
     force_gt_duration_us: 1_600_000
     n_sim_steps: 30
-    extra_overrides: "+cameras=4cam_1080 runtime.simulation_config.pose_reporting_interval_us=100000"
+    extra_overrides: "+cameras=4cam_1080 runtime.simulation_config.pose_reporting_interval_us=100000 scenes.local_usdz_dir=/mnt/mnt_m181/z59900495/workspace/DownloadTool-master/nvidia/PhysicalAI-Autonomous-Vehicles-NuRec scenes.test_suite_id=local"
 
 cosmos:
   mode: colocated
