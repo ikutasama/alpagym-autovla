@@ -15,7 +15,21 @@ model:
   num_historical_waypoints: 16
   num_future_waypoints: 10
   step_dt_us: 500000
-  bundle_config: {}
+  bundle_config:
+    codebook_cache_path: ???
+    action_start_id: 151665
+    use_cot: false
+    trajectory:
+      num_poses: 10
+      interval_length: 0.5
+    video:
+      min_pixels: 109760
+      max_pixels: 109760
+    sample:
+      max_length: 2048
+      temperature: 0.01
+      top_k: 0
+      top_p: 1.0
 
 inference:
   max_batch_size: 1
@@ -36,20 +50,3 @@ inference:
   return_trace_for_rl: true
 
 trajectory_selector: identity
-
-# AutoVLA-specific settings (consumed by bundle.load_inference_model)
-autovla:
-  codebook_cache_path: ???  # Path to agent_vocab.pkl from AutoVLA repo
-  action_start_id: 151665
-  use_cot: false
-  trajectory:
-    num_poses: 10
-    interval_length: 0.5
-  video:
-    min_pixels: 109760
-    max_pixels: 109760
-  sample:
-    max_length: 2048
-    temperature: 0.01
-    top_k: 0
-    top_p: 1.0

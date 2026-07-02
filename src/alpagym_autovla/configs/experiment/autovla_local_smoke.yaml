@@ -1,18 +1,17 @@
 # @package _global_
-# AutoVLA local smoke test on 2 GPUs (same topology as alpamayo 1.5 smoke).
-# For single-GPU testing, change topology to local_colocated_1gpu if available.
+# AutoVLA local smoke test on 1 GPU (colocated mode).
 
 defaults:
   - override /policy: autovla
-  - override /topology: local_disaggregated_2gpu
+  - override /topology: local_colocated_1gpu
 
 expected_valid_steps: 22
 
 policy:
   model:
     path: /mnt/mnt_m62/10_personal/z59900495/workspace/DownloadTool-master/Qwen/Qwen2.5-VL-3B-Instruct
-  autovla:
-    codebook_cache_path: /mnt/mnt_m62/10_personal/z59900495/workspace/AutoVLA/codebook_cache/agent_vocab.pkl
+    bundle_config:
+      codebook_cache_path: /mnt/mnt_m62/10_personal/z59900495/workspace/AutoVLA/codebook_cache/agent_vocab.pkl
 
 dataset:
   scene_ids:
@@ -26,7 +25,7 @@ alpasim:
     extra_overrides: "+cameras=4cam_1080 runtime.simulation_config.pose_reporting_interval_us=100000"
 
 cosmos:
-  mode: disaggregated
+  mode: colocated
   launch:
     policy_replicas: 1
     rollout_replicas: 1

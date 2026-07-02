@@ -160,9 +160,9 @@ def load_inference_model(
     )
     processor = AutoProcessor.from_pretrained(model_path)
 
-    # Load action tokenizer
-    autovla_config = getattr(run_config.policy, "autovla", {})
-    codebook_path = autovla_config.get(
+    # Load action tokenizer - read from model.bundle_config
+    bundle_cfg = dict(model_config.bundle_config) if model_config.bundle_config else {}
+    codebook_path = bundle_cfg.get(
         "codebook_cache_path",
         os.path.join(os.environ.get("AUTOVLA_REPO_PATH", "."), "codebook_cache/agent_vocab.pkl"),
     )
@@ -176,7 +176,7 @@ def load_inference_model(
         ActionTokenizer = _InlineActionTokenizer
 
     action_tokenizer = ActionTokenizer(processor.tokenizer, model_config={
-        "tokens": {"action_start_id": autovla_config.get("action_start_id", 151665)},
+        "tokens": {"action_start_id": bundle_cfg.get("action_start_id", 151665)},
         "codebook_cache_path": codebook_path,
     })
 
@@ -184,18 +184,18 @@ def load_inference_model(
     vlm.resize_token_embeddings(len(processor.tokenizer))
 
     # Store action_start_id on model config for the forward patch
-    vlm.config.action_start_id = autovla_config.get("action_start_id", 151665)
+    vlm.config.action_start_id = bundle_cfg.get("action_start_id", 151665)
 
     # Build the config dict for the inference model
     inf_config = {
         "model": {
-            "use_cot": autovla_config.get("use_cot", False),
-            "tokens": {"action_start_id": autovla_config.get("action_start_id", 151665)},
-            "trajectory": autovla_config.get("trajectory", {"num_poses": 10}),
-            "video": autovla_config.get("video", {"min_pixels": 109760, "max_pixels": 109760}),
+            "use_cot": bundle_cfg.get("use_cot", False),
+            "tokens": {"action_start_id": bundle_cfg.get("action_start_id", 151665)},
+            "trajectory": bundle_cfg.get("trajectory", {"num_poses": 10}),
+            "video": bundle_cfg.get("video", {"min_pixels": 109760, "max_pixels": 109760}),
         },
         "inference": {
-            "sample": autovla_config.get("sample", {
+            "sample": bundle_cfg.get("sample", {
                 "max_length": 2048,
                 "temperature": 0.01,
                 "top_k": 0,
