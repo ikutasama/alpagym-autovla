@@ -1,0 +1,54 @@
+# @package _global_
+# AutoVLA local smoke test on 2 GPUs (same topology as alpamayo 1.5 smoke).
+# For single-GPU testing, change topology to local_colocated_1gpu if available.
+
+defaults:
+  - override /policy: autovla
+  - override /topology: local_disaggregated_2gpu
+
+expected_valid_steps: 22
+
+policy:
+  model:
+    path: ???  # Set to your AutoVLA checkpoint path (Qwen2.5-VL with action tokens)
+  autovla:
+    codebook_cache_path: ???  # Set to AutoVLA repo's codebook_cache/agent_vocab.pkl
+
+dataset:
+  scene_ids:
+    - clipgt-a309e228-26e1-423e-a44c-cb00aa7378cb
+
+alpasim:
+  wizard_args:
+    control_timestep_us: 200_000
+    force_gt_duration_us: 1_600_000
+    n_sim_steps: 30
+    extra_overrides: "+cameras=4cam_1080 runtime.simulation_config.pose_reporting_interval_us=100000"
+
+cosmos:
+  mode: disaggregated
+  launch:
+    policy_replicas: 1
+    rollout_replicas: 1
+  policy:
+    parallelism:
+      dp_shard_size: 1
+  train:
+    max_num_steps: 1
+    num_epochs: 1
+    train_batch_per_replica: 1
+    optm_lr: 1.0e-5
+    optm_warmup_steps: 1
+    ckpt:
+      enable_checkpoint: true
+      export_safetensors: false
+    train_policy:
+      mini_batch: 1
+      grpo_optimization_iterations: 1
+      kl_beta: 0.04
+  rollout:
+    n_generation: 2
+    batch_size: 1
+    prefetch_rollout: false
+  logging:
+    experiment_name: autovla_local_smoke

@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=64.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "alpagym-autovla"
+version = "0.1.0"
+dependencies = ["alpagym-runtime", "transformers>=4.45.0", "qwen-vl-utils", "pillow"]
+
+[project.entry-points."alpagym.policy_bundles"]
+autovla = "alpagym_autovla.bundle:get_bundle"
+
+[project.entry-points."alpagym.configs"]
+autovla = "alpagym_autovla.configs"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"alpagym_autovla.configs" = ["**/*.yaml"]
